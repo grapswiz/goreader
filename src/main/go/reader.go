@@ -2,7 +2,6 @@ package goreader
 
 import (
 	"code.google.com/p/go.net/html"
-	"encoding/json"
 	"fmt"
 	"goweb"
 	"io/ioutil"
@@ -10,22 +9,7 @@ import (
 
 	"appengine"
 	"appengine/urlfetch"
-	"appengine/user"
 )
-
-type Auth struct {
-	LoginUrl  string
-	LogoutUrl string
-	LoggedIn  bool
-}
-
-func (auth Auth) toJson() string {
-	b, err := json.Marshal(auth)
-	if err != nil {
-		return "{}"
-	}
-	return string(b)
-}
 
 type FeedsController struct{}
 
@@ -62,22 +46,6 @@ func init() {
 
 	goweb.ConfigureDefaultFormatters()
 	http.Handle("/v1/api/", goweb.DefaultHttpHandler)
-}
-
-func authHandler(rw http.ResponseWriter, req *http.Request) {
-	c := appengine.NewContext(req)
-	u := user.Current(c)
-	var auth Auth
-	auth.LoginUrl, _ = user.LoginURL(c, "/")
-	auth.LogoutUrl, _ = user.LogoutURL(c, "/")
-	if u == nil {
-		auth.LoggedIn = false
-	} else {
-		auth.LoggedIn = true
-	}
-
-	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(rw, "%s", auth.toJson())
 }
 
 func feedUrl(client *http.Client, url string) (feedUrl string, err error) {
