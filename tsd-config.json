@@ -1,0 +1,37 @@
+{
+	"localPath": "src/main/typescript/libs",
+	"typingsPath": "src/main/typescript/libs",
+	"libPath": "lib",
+	"repo": {
+		"uriList": [
+			{
+				"sourceType": 1,
+				"source": "http://www.tsdpm.com/repository_v2.json"
+			}
+		]
+	},
+	"dependencies": {
+		"angular@1.0": {
+			"repo": {
+				"sourceType": 1,
+				"source": "http://www.tsdpm.com/repository_v2.json"
+			},
+			"key": "C7349CEE-CFBF-4139-AA3D-D6054FB3E8E1",
+			"uri": {
+				"source": "https://github.com/borisyankov/DefinitelyTyped/raw/master/angularjs/angular.d.ts",
+				"sourceType": 1
+			}
+		},
+		"jquery@1.9": {
+			"repo": {
+				"sourceType": 1,
+				"source": "http://www.tsdpm.com/repository_v2.json"
+			},
+			"key": "ab94ec25-d89a-483d-a904-66db6d77a174",
+			"uri": {
+				"source": "https://github.com/borisyankov/DefinitelyTyped/raw/master/jquery/jquery.d.ts",
+				"sourceType": 1
+			}
+		}
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"name": "boilerplate",
+	"version": "0.0.1",
+	"description": "boilerplate =========== Write about - bower - grunt - requirejs - typescript - angularjs - karma - bootstrap",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/grapswiz/boilerplate.git"
+	},
+	"author": "grapswiz",
+	"license": "BSD",
+	"gitHead": "cdab08e1eb68101bcc59d1c63118119376c5776f",
+	"readmeFilename": "README.md",
+	"bugs": {
+		"url": "https://github.com/grapswiz/goreader/issues"
+	},
+	"dependencies": {
+		"grunt": "~0.4.1",
+		"jamjs": "~0.2.17",
+		"grunt-typescript": "~0.1.5"
+	},
+	"jam": {
+		"packageDir": "src/main/webapp/scripts/libs/jam",
+		"baseUrl": "src/main/webapp",
+		"dependencies": {
+			"angularjs": "1.0.6",
+			"jquery": "1.9.0"
+		}
+	}
+}
