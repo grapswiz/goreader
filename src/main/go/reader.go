@@ -3,7 +3,6 @@ package goreader
 import (
 	"code.google.com/p/go.net/html"
 	"fmt"
-	"goweb"
 	"io/ioutil"
 	"net/http"
 
@@ -11,41 +10,28 @@ import (
 	"appengine/urlfetch"
 )
 
-type FeedsController struct{}
-
-func (r *FeedsController) HandleRequest(c *goweb.Context) {
-	context := appengine.NewContext(c.Request)
-	client := urlfetch.Client(context)
-	method := c.PathParams["method"]
-	if method == "get" {
-		feeds, err := getFeeds(context)
-		if err != nil {
-			fmt.Fprintf(c.ResponseWriter, "Feed Not Found")
-			return
-		}
-		fmt.Fprintf(c.ResponseWriter, "%s", feeds)
-	} else if method == "post" {
+func feedHandler(rw http.ResponseWriter, req *http.Request) {
+	c := appengine.NewContext(req)
+	client := urlfetch.Client(c)
+	method := req.Method
+	if method == "GET" {
+		fmt.Fprintf(rw, "get")
 		url, err := feedUrl(client, "http://blog.alexmaccaw.com/")
 		if err != nil {
-			fmt.Fprintf(c.ResponseWriter, "Feed URL Not Found")
+			fmt.Fprintf(rw, "Feed URL Not Found")
 			return
 		}
-		err = createFeed(context, url)
-		if err != nil {
-			panic(err)
-		}
 		data := feedData(client, url)
-		fmt.Fprintf(c.ResponseWriter, "%s", string(data))
+		fmt.Fprintf(rw, "%s", string(data))
+
+	} else if method == "POST" {
+		_ = createFeed(c, req.FormValue("url"))
 	}
 }
 
 func init() {
 	http.HandleFunc("/v1/auth", authHandler)
-	var feedsController *FeedsController = new(FeedsController)
-	goweb.Map("/v1/api/feeds/{method}", feedsController)
-
-	goweb.ConfigureDefaultFormatters()
-	http.Handle("/v1/api/", goweb.DefaultHttpHandler)
+	http.HandleFunc("/v1/api/feeds", feedHandler)
 }
 
 func feedUrl(client *http.Client, url string) (feedUrl string, err error) {
