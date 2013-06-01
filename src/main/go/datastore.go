@@ -4,7 +4,10 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"encoding/json"
+	"errors"
 	"time"
+
+	"appengine/user"
 )
 
 type Feed struct {
@@ -52,7 +55,13 @@ func getFeeds(c appengine.Context) (string, error) {
 
 func createFeed(c appengine.Context, url string) error {
 	feed := Feed{url, time.Now()}
-	_, err := datastore.Put(c, datastore.NewIncompleteKey(c, "Feed", nil), &feed)
+
+	u := user.Current(c)
+	if u == nil {
+		return errors.New("User Not Found")
+	}
+	parent := datastore.NewKey(c, "User", u.Email, 0, nil)
+	_, err := datastore.Put(c, datastore.NewIncompleteKey(c, "Feed", parent), &feed)
 
 	return err
 }
