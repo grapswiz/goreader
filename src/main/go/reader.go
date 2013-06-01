@@ -15,6 +15,7 @@ func feedHandler(rw http.ResponseWriter, req *http.Request) {
 	client := urlfetch.Client(c)
 	method := req.Method
 	if method == "GET" {
+		//TODO createFeedでフィードのURLでEntityを作って、getFeedではそのフィードをfetchしてパースして返す
 		fmt.Fprintf(rw, "get")
 		url, err := feedUrl(client, "http://blog.alexmaccaw.com/")
 		if err != nil {
