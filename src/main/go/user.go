@@ -26,16 +26,36 @@ func (auth Auth) toJson() string {
 }
 
 type User struct {
-	Email     string
 	Admin     bool
 	CreatedAt time.Time
 }
 
-func createUser(c appengine.Context, email string, admin bool) error {
-	user := User{email, admin, time.Now()}
-	_, err := datastore.Put(c, datastore.NewIncompleteKey(c, "User", nil), &user)
+func createUser(c appengine.Context, key string, admin bool) error {
+	user := User{admin, time.Now()}
+	_, err := datastore.Put(c, datastore.NewKey(c, "User", key, 0, nil), &user)
 
 	return err
+}
+
+func existsUser(c appengine.Context, key string) bool {
+	k := datastore.NewKey(c, "User", key, 0, nil)
+	q := datastore.NewQuery("User").
+		Filter("__key__ =", k).
+		Limit(1).
+		KeysOnly()
+	for t := q.Run(c); ; {
+		var x User
+		key, err := t.Next(&x)
+		if err != nil {
+			break
+		}
+		if key != nil {
+			return true
+		} else {
+			break
+		}
+	}
+	return false
 }
 
 func authHandler(rw http.ResponseWriter, req *http.Request) {
@@ -53,9 +73,10 @@ func authHandler(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(rw, "%s", auth.toJson())
 
-	//TODO uがnil以外の場合、Datastoreを検索して、もしuのuserエンティティが存在しなかったらエンティティを作る
-	// entityのkeyにemailを設定したい（検索するときkeyだけで済むように）
 	if u == nil {
+		return
+	}
+	if existsUser(c, u.Email) {
 		return
 	}
 	createUser(c, u.Email, u.Admin)
